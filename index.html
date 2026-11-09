@@ -6,12 +6,19 @@
 <title>Álbum de la boda · Cecilia & Eduardo</title>
 <meta name="description" content="Subí tus fotos del casamiento de Cecilia y Eduardo y mirá las de todos en vivo.">
 <meta name="theme-color" content="#ffffff">
+<!-- App en la pantalla de inicio -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ceci & Edu">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Forum&family=Pinyon+Script&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  /* ============ CONFIGURACIÓN RÁPIDA ============
-     Si querés cambiar colores, hacelo acá. */
+  /* ============ COLORES ============ */
   :root{
     --papel:#ffffff;
     --tinta:#111111;
@@ -21,34 +28,59 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   [hidden]{display:none!important}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:56px}
   body{
     background:var(--papel);color:var(--tinta);
-    font-family:"Crimson Pro",Georgia,serif;font-size:18px;line-height:1.45;
-    min-height:100vh;
+    font-family:"Crimson Pro",Georgia,serif;font-size:18px;line-height:1.45;min-height:100vh;
+    padding-bottom:env(safe-area-inset-bottom);
   }
   .wrap{max-width:960px;margin:0 auto;padding:16px 16px 60px}
+  button{font:inherit;color:inherit}
 
   /* ---------- Cabecera tipo periódico ---------- */
   .edicion{display:flex;align-items:center;gap:12px;font-family:Forum,serif;letter-spacing:.12em;font-size:13px}
   .edicion::before,.edicion::after{content:"";flex:1;border-top:4px solid var(--linea)}
-  .mast{font-family:"UnifrakturMaguntia",serif;font-size:clamp(46px,13vw,96px);text-align:center;line-height:1.05;margin:4px 0 6px}
+  .mast{font-family:"UnifrakturMaguntia",serif;font-weight:400;font-size:clamp(46px,13vw,96px);text-align:center;line-height:1.05;margin:4px 0 6px}
   .regla{border-top:1px solid var(--linea)}
   .titular{font-family:Forum,serif;text-align:center;font-size:clamp(24px,7vw,46px);letter-spacing:.04em;padding:4px 0}
   .novios{font-family:Forum,serif;text-align:center;font-size:clamp(30px,9.5vw,62px);line-height:1.05;padding:8px 0 0;letter-spacing:.01em}
   .script{font-family:"Pinyon Script",cursive;text-align:center;font-size:clamp(34px,10vw,60px);line-height:1.15;margin:2px 0 4px}
   .fecha{font-family:"Pinyon Script",cursive;text-align:center;font-size:28px}
-  .doble{border-top:1px solid var(--linea);border-bottom:4px solid var(--linea);height:7px;margin:8px 0 18px}
+  .doble{border-top:1px solid var(--linea);border-bottom:4px solid var(--linea);height:7px;margin:8px 0 0}
+
+  /* ---------- Menú fijo ---------- */
+  .menu{position:sticky;top:0;z-index:20;background:var(--papel);border-bottom:1px solid var(--linea);
+    display:grid;grid-template-columns:repeat(3,1fr);margin:0 -16px 18px;padding:0 16px}
+  .menu a{font-family:Forum,serif;letter-spacing:.1em;font-size:15px;text-align:center;padding:12px 4px;color:var(--tinta);text-decoration:none}
+  .menu a+a{border-left:1px solid #ddd}
+
+  h2.sec{font-family:Forum,serif;font-weight:400;font-size:25px;letter-spacing:.06em;text-align:center;margin-bottom:4px}
+  .bajada{text-align:center;color:var(--gris);font-style:italic;margin-bottom:14px}
+  .caja{border:1px solid var(--linea);padding:18px 16px;margin:0 0 26px;background:var(--papel)}
+
+  /* ---------- Instalar app ---------- */
+  .instalar{display:flex;gap:12px;align-items:center;border:1px solid var(--linea);padding:10px 12px;margin:0 0 18px;background:var(--suave)}
+  .instalar img{width:46px;height:46px;flex:none;border:1px solid #ccc}
+  .instalar .txt{flex:1;font-size:15px;line-height:1.3}
+  .instalar .txt b{font-family:Forum,serif;letter-spacing:.05em;font-weight:400;font-size:16px;display:block}
+  .instalar .x{background:none;border:0;font-size:24px;cursor:pointer;padding:0 4px;align-self:flex-start;line-height:1}
+  .ios-share{display:inline-block;width:16px;height:16px;vertical-align:-2px}
 
   /* ---------- Subir fotos ---------- */
-  .subir{border:1px solid var(--linea);padding:18px 16px;margin:0 0 22px;background:var(--papel)}
-  .subir h2{font-family:Forum,serif;font-weight:400;font-size:24px;letter-spacing:.06em;text-align:center;margin-bottom:4px}
-  .subir p.bajada{text-align:center;color:var(--gris);font-style:italic;margin-bottom:14px}
-  label.campo{display:block;font-family:Forum,serif;letter-spacing:.08em;font-size:14px;margin-bottom:4px}
-  input[type=text]{
+  label.campo, .etq{display:block;font-family:Forum,serif;letter-spacing:.08em;font-size:14px;margin-bottom:6px}
+  input[type=text], select{
     width:100%;font:inherit;padding:11px 12px;border:1px solid var(--linea);background:#fff;border-radius:0;
-    margin-bottom:14px;color:var(--tinta)
+    margin-bottom:14px;color:var(--tinta);-webkit-appearance:none;appearance:none
   }
+  select{background-image:linear-gradient(45deg,transparent 50%,#111 50%),linear-gradient(135deg,#111 50%,transparent 50%);
+    background-position:calc(100% - 18px) 52%,calc(100% - 12px) 52%;background-size:6px 6px;background-repeat:no-repeat;padding-right:34px}
+  .quien{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px dotted #999;padding:0 0 10px;margin-bottom:14px}
+  .quien b{font-weight:600}
+  .link{background:none;border:0;text-decoration:underline;cursor:pointer;font-size:15px;color:var(--gris)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{font-family:Forum,serif;letter-spacing:.06em;font-size:15px;padding:8px 13px;border:1px solid var(--linea);background:#fff;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;white-space:nowrap}
+  .chip[aria-pressed=true]{background:var(--tinta);color:#fff}
   .botones{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .btn{
     display:flex;align-items:center;justify-content:center;gap:8px;
@@ -60,28 +92,52 @@
   .btn:active{transform:translateY(1px)}
   .btn svg{width:20px;height:20px;flex:none}
   input[type=file]{display:none}
-  #estado{margin-top:12px;font-size:16px}
+  .ayuda{margin-top:10px;text-align:center;color:var(--gris);font-size:15px;font-style:italic}
+  #estado{margin-top:8px;font-size:16px;text-align:center}
   .barra{height:6px;border:1px solid var(--linea);margin-top:6px;display:none}
   .barra>i{display:block;height:100%;width:0;background:var(--tinta);transition:width .25s}
   .ok{font-style:italic}
   .err{color:#a40000}
 
+  /* ---------- Retos ---------- */
+  .retos{list-style:none;counter-reset:r}
+  .retos li{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px dotted #aaa;cursor:pointer;counter-increment:r}
+  .retos li:last-child{border-bottom:0}
+  .retos .chk{width:24px;height:24px;border:1px solid var(--linea);flex:none;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .retos li.hecho .chk{background:var(--tinta);color:#fff}
+  .retos li.hecho .nom{text-decoration:line-through;text-decoration-thickness:1px;color:var(--gris)}
+  .retos .nom{flex:1;line-height:1.25}
+  .retos .nom::before{content:counter(r) ". ";font-family:Forum,serif}
+  .retos .cnt{font-size:14px;color:var(--gris);font-style:italic;white-space:nowrap}
+  .progreso{text-align:center;font-family:Forum,serif;letter-spacing:.06em;margin:4px 0 12px}
+  .podio{margin-top:18px;border-top:4px double var(--linea);padding-top:12px}
+  .podio h3{font-family:Forum,serif;font-weight:400;letter-spacing:.08em;text-align:center;font-size:19px;margin-bottom:6px}
+  .podio ol{list-style:none}
+  .podio li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dotted #ccc}
+  .podio li.yo{font-weight:600}
+  .podio .pos{font-family:Forum,serif;width:28px;flex:none}
+  .podio .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .podio .vacio{border:0;padding:6px;font-size:15px}
+
   /* ---------- Galería ---------- */
-  .cab-galeria{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-  .cab-galeria h2{font-family:Forum,serif;font-weight:400;font-size:26px;letter-spacing:.06em}
-  .contador{color:var(--gris);font-style:italic}
-  .vivo{display:inline-flex;align-items:center;gap:6px;font-family:Forum,serif;letter-spacing:.1em;font-size:13px}
+  .cab-galeria{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .cab-galeria h2{font-family:Forum,serif;font-weight:400;font-size:25px;letter-spacing:.06em}
+  .vivo{display:inline-flex;align-items:center;gap:6px;font-family:Forum,serif;letter-spacing:.1em;font-size:13px;white-space:nowrap}
   .vivo::before{content:"";width:8px;height:8px;border-radius:50%;background:#c00;animation:lat 1.6s infinite}
   @keyframes lat{50%{opacity:.25}}
-  .acciones{display:flex;gap:8px;align-items:center}
   .mini{font-family:Forum,serif;font-size:14px;letter-spacing:.08em;padding:7px 10px;border:1px solid var(--linea);background:#fff;cursor:pointer;color:var(--tinta)}
+  .filtros{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin:0 -16px 6px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+  .filtros::-webkit-scrollbar{display:none}
+  .contador{color:var(--gris);font-style:italic;margin-bottom:8px}
 
   .grilla{columns:2 160px;column-gap:8px}
   .foto{break-inside:avoid;margin-bottom:8px;position:relative;cursor:zoom-in;background:var(--suave);overflow:hidden}
-  .foto img{display:block;width:100%;height:auto;filter:grayscale(0);transition:opacity .4s}
+  .foto img{display:block;width:100%;height:auto;transition:opacity .4s}
   .foto img.cargando{opacity:0;min-height:140px}
-  .foto .autor{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 5px;font-size:14px;color:#fff;
-    background:linear-gradient(transparent,rgba(0,0,0,.6));font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .foto .autor{position:absolute;left:0;right:0;bottom:0;padding:18px 8px 5px;font-size:14px;color:#fff;
+    background:linear-gradient(transparent,rgba(0,0,0,.65));font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .foto .sello{position:absolute;top:6px;left:6px;background:#fff;color:#111;font-family:Forum,serif;font-size:12px;letter-spacing:.06em;
+    padding:2px 6px;border:1px solid #111;max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .foto.nueva{animation:entra .8s ease}
   @keyframes entra{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
   .vacio{border:1px dashed var(--gris);padding:30px 16px;text-align:center;color:var(--gris);font-style:italic}
@@ -91,19 +147,19 @@
   .demo{background:#fff6d6;border:1px solid #d8b84a;padding:10px 12px;margin-bottom:14px;font-size:15px}
 
   /* ---------- Visor ---------- */
-  .visor{position:fixed;inset:0;background:rgba(10,10,10,.96);display:none;z-index:50;
+  .visor{position:fixed;inset:0;background:#0a0a0a;display:none;z-index:50;
     align-items:center;justify-content:center;flex-direction:column}
   .visor.abierto{display:flex}
-  .visor img{max-width:96vw;max-height:80vh;object-fit:contain}
-  .visor .info{color:#eee;margin-top:10px;font-style:italic;text-align:center;padding:0 14px}
-  .visor .info a{color:#fff;margin-left:10px;font-style:normal;font-family:Forum,serif;letter-spacing:.06em}
+  .visor img{max-width:96vw;max-height:78vh;object-fit:contain}
+  .visor .info{color:#eee;margin-top:10px;font-style:italic;text-align:center;padding:0 14px;line-height:1.35}
+  .visor .info a{color:#fff;font-style:normal;font-family:Forum,serif;letter-spacing:.06em;display:inline-block;margin-top:6px}
   .visor button{position:absolute;background:none;border:0;color:#fff;font-size:38px;cursor:pointer;padding:10px 16px;line-height:1}
   .cerrar{top:max(6px,env(safe-area-inset-top));right:6px}
   .ant{left:0;top:50%;transform:translateY(-50%)}
   .sig{right:0;top:50%;transform:translateY(-50%)}
 
   /* ---------- Modo pantalla (para proyectar en el salón) ---------- */
-  .pantalla{position:fixed;inset:0;background:#000;z-index:60;display:none}
+  .pantalla{position:fixed;inset:0;background:#000;z-index:60;display:none;cursor:none}
   .pantalla.activa{display:block}
   .pantalla .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s}
   .pantalla .slide.on{opacity:1}
@@ -113,16 +169,23 @@
   .pantalla .marca .m1{font-family:"UnifrakturMaguntia",serif;font-size:42px;line-height:1}
   .pantalla .marca .m2{font-family:"Pinyon Script",cursive;font-size:30px}
   .pantalla .marca .m3{font-style:italic;font-size:20px}
+  .pantalla .marca .m4{font-family:Forum,serif;letter-spacing:.06em;font-size:18px;background:#fff;color:#111;display:inline-block;padding:2px 8px;margin-top:4px;text-shadow:none}
   .pantalla .qr{position:absolute;right:24px;bottom:20px;background:#fff;padding:10px;text-align:center;font-family:Forum,serif;letter-spacing:.06em;font-size:15px;color:#111}
   .pantalla .qr svg{display:block;width:150px;height:150px}
   .pantalla .salir{position:absolute;top:12px;right:14px;background:rgba(0,0,0,.4);color:#fff;border:1px solid #fff;font-family:Forum,serif;padding:6px 10px;cursor:pointer;opacity:.25}
   .pantalla .salir:hover{opacity:1}
   .pantalla .espera{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Pinyon Script",cursive;font-size:56px;text-align:center;padding:20px}
 
+  /* En el celular no se muestra el botón de pantalla (se usa el link ?pantalla en la compu del salón) */
+  #btnPantalla{display:none}
   @media (min-width:700px){
+    #btnPantalla{display:inline-block}
     .grilla{columns:3 200px}
-    .subir{padding:24px 28px}
+    .caja{padding:24px 28px}
+    .menu{margin:0 0 18px}
   }
+  /* Ya instalada como app: más espacio arriba en iPhone */
+  @media (display-mode: standalone){ body{padding-top:env(safe-area-inset-top)} }
 </style>
 </head>
 <body>
@@ -138,22 +201,52 @@
   <div class="fecha">05 de Diciembre de 2026</div>
   <div class="doble"></div>
 
+  <nav class="menu">
+    <a href="#subir">SUBIR</a>
+    <a href="#retos">RETOS</a>
+    <a href="#fotos">FOTOS</a>
+  </nav>
+
   <div id="avisoDemo" class="demo" hidden>
     <b>Modo demostración:</b> todavía no se pegó la dirección del script de Google en <code>API_URL</code>.
     Las fotos que subas ahora solo se ven en este celular y se borran al recargar.
   </div>
 
-  <section class="subir">
-    <h2>SUBÍ TUS FOTOS</h2>
-    <p class="bajada">Todas las fotos que subas las van a ver los novios y el resto de los invitados.</p>
+  <!-- Aviso para instalar como app -->
+  <div class="instalar" id="instalar" hidden>
+    <img src="apple-touch-icon.png" alt="">
+    <div class="txt">
+      <b>TENÉ EL ÁLBUM COMO APP</b>
+      <span id="instalarTxt"></span>
+    </div>
+    <button class="mini" id="btnInstalar" hidden>Instalar</button>
+    <button class="x" id="cerrarInstalar" aria-label="Cerrar">×</button>
+  </div>
 
-    <label class="campo" for="nombre">TU NOMBRE (opcional)</label>
-    <input type="text" id="nombre" maxlength="40" placeholder="Ej: Tía Marta" autocomplete="name">
+  <!-- ================= SUBIR ================= -->
+  <section class="caja" id="subir">
+    <h2 class="sec">SUBÍ TUS FOTOS</h2>
+    <p class="bajada">Las ven los novios y el resto de los invitados, en vivo.</p>
+
+    <div id="conNombre" class="quien" hidden>
+      <span>Subís como <b id="nombreVisto"></b></span>
+      <button class="link" id="cambiarNombre">cambiar</button>
+    </div>
+    <div id="sinNombre">
+      <label class="campo" for="nombre">TU NOMBRE <span style="color:var(--gris)">(para los retos)</span></label>
+      <input type="text" id="nombre" maxlength="40" placeholder="Ej: Tía Marta" autocomplete="name" enterkeyhint="done">
+    </div>
+
+    <span class="etq">¿EN QUÉ MOMENTO?</span>
+    <div class="chips" id="chipsMomento" role="group" aria-label="Momento"></div>
+
+    <label class="campo" for="reto">¿CUMPLE ALGÚN RETO? <span style="color:var(--gris)">(opcional)</span></label>
+    <select id="reto"></select>
 
     <div class="botones">
       <label class="btn" for="archivos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
-        Elegir fotos
+        Galería
       </label>
       <label class="btn claro" for="camara">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
@@ -162,22 +255,35 @@
     </div>
     <input type="file" id="archivos" accept="image/*" multiple>
     <input type="file" id="camara" accept="image/*" capture="environment">
+    <p class="ayuda">Podés elegir varias fotos a la vez de la galería de tu celular.</p>
 
     <div id="estado" aria-live="polite"></div>
     <div class="barra" id="barra"><i></i></div>
   </section>
 
-  <section>
+  <!-- ================= RETOS ================= -->
+  <section class="caja" id="retos">
+    <h2 class="sec">RETOS FOTOGRÁFICOS</h2>
+    <p class="bajada">Sacá una foto para cada reto. ¡Quien complete más se lleva un premio!</p>
+    <p class="progreso" id="miProgreso"></p>
+    <ul class="retos" id="listaRetos"></ul>
+    <div class="podio">
+      <h3>TABLA DE POSICIONES</h3>
+      <ol id="ranking"></ol>
+    </div>
+  </section>
+
+  <!-- ================= FOTOS ================= -->
+  <section id="fotos">
     <div class="cab-galeria">
       <h2>LAS FOTOS DE TODOS</h2>
-      <div class="acciones">
-        <span class="vivo">EN VIVO</span>
-        <button class="mini" id="btnPantalla" title="Para proyectar en el salón">▶ Pantalla</button>
-      </div>
+      <span class="vivo">EN VIVO</span>
     </div>
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar fotos"></div>
     <p class="contador" id="contador">Cargando fotos…</p>
     <div class="grilla" id="grilla"></div>
     <button class="mini mas" id="verMas" hidden>Ver más fotos</button>
+    <p style="text-align:center;margin-top:16px"><button class="mini" id="btnPantalla" title="Para proyectar en el salón">▶ Modo pantalla</button></p>
   </section>
 
   <p class="pie">Con cariño, Ceci &amp; Edu · Salón Alma MyG</p>
@@ -200,6 +306,7 @@
     <div class="m1">The Wedding Post</div>
     <div class="m2">Cecilia &amp; Eduardo</div>
     <div class="m3" id="pAutor"></div>
+    <div class="m4" id="pReto" hidden></div>
   </div>
   <div class="qr" id="qr"></div>
   <button class="salir" id="pSalir">Salir</button>
@@ -208,10 +315,28 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
 <script>
 /* =====================================================================
-   PEGÁ ACÁ la dirección de la "Aplicación web" de Google Apps Script
-   (termina en /exec). Ej: https://script.google.com/macros/s/AKfy.../exec
+   CONFIGURACIÓN — se puede editar
    ===================================================================== */
 const API_URL = "https://script.google.com/macros/s/AKfycbxhENpaA95SVHzC39EYimwX6sbHUbpz_EfE9p5j6XnutH3lX_C8umxTiFoN4joMzLLRig/exec";
+
+// Momentos de la boda (filtros de la galería)
+const MOMENTOS = ["Iglesia", "Fiesta", "Vals", "Mesa dulce"];
+
+// Retos fotográficos (agregá, sacá o cambiá los que quieras)
+const RETOS = [
+  "Selfie con los novios",
+  "La mesa más divertida",
+  "Alguien bailando cuarteto",
+  "Un brindis",
+  "Foto con alguien que acabás de conocer",
+  "El mejor paso de baile",
+  "Un abrazo grupal",
+  "Los anillos",
+  "Alguien emocionado",
+  "La foto más elegante de la noche",
+  "Foto con los padrinos",
+  "Una foto en la mesa dulce"
+];
 
 const CADA_CUANTO = 20000;      // cada cuántos ms se buscan fotos nuevas (20 s)
 const POR_PAGINA = 30;          // fotos que se muestran antes de "Ver más"
@@ -221,27 +346,128 @@ const SEG_PANTALLA = 7;         // segundos que dura cada foto en modo pantalla
 /* ===================================================================== */
 const DEMO = !/^https:\/\/script\.google\.com\//.test(API_URL);
 const $ = id => document.getElementById(id);
-let fotos = [];                 // [{id, autor, fecha, src?}]
+let fotos = [];                 // [{id, autor, reto, momento, fecha, src?}]
 let conocidas = new Set();
 let mostradas = POR_PAGINA;
 let primeraCarga = true;
+let filtro = "Todas";
+let momentoElegido = "";
 
-function urlFoto(f, ancho){
-  if (f.src) return f.src;
-  return "https://lh3.googleusercontent.com/d/" + f.id + "=w" + ancho;
+const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch(e){} };
+const leer = k => { try { return localStorage.getItem(k) || ""; } catch(e){ return ""; } };
+const clave = s => String(s || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+function urlFoto(f, ancho){ return f.src ? f.src : "https://lh3.googleusercontent.com/d/" + f.id + "=w" + ancho; }
+function urlRespaldo(f, ancho){ return "https://drive.google.com/thumbnail?id=" + f.id + "&sz=w" + ancho; }
+
+/* ---------- Nombre (se pide una vez y se recuerda) ---------- */
+function miNombre(){ return leer("boda_nombre"); }
+function mostrarNombre(){
+  const n = miNombre();
+  $("conNombre").hidden = !n;
+  $("sinNombre").hidden = !!n;
+  $("nombreVisto").textContent = n;
+  pintarRetos();
 }
-function urlRespaldo(f, ancho){
-  return "https://drive.google.com/thumbnail?id=" + f.id + "&sz=w" + ancho;
+function fijarNombre(){
+  const v = $("nombre").value.trim();
+  if (v){ guardar("boda_nombre", v); mostrarNombre(); }
+}
+$("nombre").addEventListener("change", fijarNombre);
+$("nombre").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("nombre").blur(); } });
+$("cambiarNombre").onclick = () => {
+  $("nombre").value = miNombre();
+  $("conNombre").hidden = true; $("sinNombre").hidden = false; $("nombre").focus();
+};
+
+/* ---------- Momentos ---------- */
+function armarChips(){
+  const c = $("chipsMomento");
+  MOMENTOS.forEach(m => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = m; b.setAttribute("aria-pressed", "false");
+    b.onclick = () => {
+      momentoElegido = momentoElegido === m ? "" : m;
+      [...c.children].forEach(x => x.setAttribute("aria-pressed", String(x.textContent === momentoElegido)));
+    };
+    c.appendChild(b);
+  });
+  const f = $("filtros");
+  ["Todas", ...MOMENTOS, "Retos"].forEach(m => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = m; b.dataset.f = m;
+    b.setAttribute("aria-pressed", String(m === filtro));
+    b.onclick = () => elegirFiltro(m);
+    f.appendChild(b);
+  });
+  const s = $("reto");
+  s.innerHTML = '<option value="">— Ninguno —</option>' +
+    RETOS.map((r, i) => '<option value="' + i + '">' + (i+1) + ". " + r.replace(/</g,"&lt;") + "</option>").join("");
+}
+function elegirFiltro(m){
+  filtro = m; mostradas = POR_PAGINA;
+  [...$("filtros").children].forEach(x => x.setAttribute("aria-pressed", String(x.dataset.f === m)));
+  $("grilla").innerHTML = "";
+  pintar();
+}
+function filtradas(){
+  if (filtro === "Todas") return fotos;
+  if (filtro === "Retos") return fotos.filter(f => f.reto);
+  return fotos.filter(f => f.momento === filtro);
 }
 
-/* ---------- Nombre recordado ---------- */
-try { $("nombre").value = localStorage.getItem("boda_nombre") || ""; } catch(e){}
-$("nombre").addEventListener("change", () => { try { localStorage.setItem("boda_nombre", $("nombre").value.trim()); } catch(e){} });
+/* ---------- Retos y ranking ---------- */
+function pintarRetos(){
+  const yo = clave(miNombre());
+  const porReto = {}, mios = new Set(), personas = {};
+  fotos.forEach(f => {
+    if (!f.reto) return;
+    porReto[f.reto] = (porReto[f.reto] || 0) + 1;
+    const k = clave(f.autor);
+    if (!k || k === "invitado") return;
+    if (!personas[k]) personas[k] = { nombre: f.autor, retos: new Set(), ultima: 0 };
+    personas[k].retos.add(f.reto);
+    if (f.fecha > personas[k].ultima) personas[k].ultima = f.fecha;
+    if (yo && k === yo) mios.add(f.reto);
+  });
+  // lista de retos
+  const ul = $("listaRetos"); ul.innerHTML = "";
+  RETOS.forEach((r, i) => {
+    const li = document.createElement("li");
+    if (mios.has(r)) li.className = "hecho";
+    const chk = document.createElement("span"); chk.className = "chk"; chk.textContent = mios.has(r) ? "✓" : "";
+    const nom = document.createElement("span"); nom.className = "nom"; nom.textContent = r;
+    const cnt = document.createElement("span"); cnt.className = "cnt";
+    const n = porReto[r] || 0; cnt.textContent = n ? (n === 1 ? "1 foto" : n + " fotos") : "";
+    li.append(chk, nom, cnt);
+    li.title = "Subir una foto para este reto";
+    li.onclick = () => { $("reto").value = String(i); location.hash = ""; $("subir").scrollIntoView({ behavior: "smooth" }); };
+    ul.appendChild(li);
+  });
+  $("miProgreso").textContent = yo ? ("Llevás " + mios.size + " de " + RETOS.length + " retos") : "Poné tu nombre arriba para sumar puntos";
+  // ranking: retos distintos completados; empate → quien llegó primero
+  const lista = Object.entries(personas).map(([k, p]) => ({ k, nombre: p.nombre, n: p.retos.size, ultima: p.ultima }))
+    .sort((a, b) => b.n - a.n || a.ultima - b.ultima);
+  const ol = $("ranking"); ol.innerHTML = "";
+  if (!lista.length){ ol.innerHTML = '<li class="vacio">Todavía nadie completó un reto. ¡Empezá vos!</li>'; return; }
+  const medallas = ["🥇", "🥈", "🥉"];
+  let top = lista.slice(0, 5);
+  const miPos = lista.findIndex(p => p.k === yo);
+  if (miPos >= 5) top = top.concat([lista[miPos]]);
+  top.forEach(p => {
+    const pos = lista.indexOf(p);
+    const li = document.createElement("li"); if (p.k === yo) li.className = "yo";
+    const a = document.createElement("span"); a.className = "pos"; a.textContent = medallas[pos] || (pos + 1) + ".";
+    const b = document.createElement("span"); b.className = "n"; b.textContent = p.nombre;
+    const c = document.createElement("span"); c.textContent = p.n + (p.n === 1 ? " reto" : " retos");
+    li.append(a, b, c); ol.appendChild(li);
+  });
+}
 
 /* ---------- Galería ---------- */
 async function cargarLista(){
   if (DEMO){
-    if (primeraCarga) { fotos = demoFotos(); }
+    if (primeraCarga) fotos = demoFotos();
   } else {
     try {
       const r = await fetch(API_URL + "?accion=lista&t=" + Date.now());
@@ -253,48 +479,47 @@ async function cargarLista(){
       return;
     }
   }
-  pintar();
+  pintar(); pintarRetos();
   primeraCarga = false;
 }
 
 function pintar(){
   const grilla = $("grilla");
-  $("contador").textContent = fotos.length === 0 ? "" :
-    (fotos.length === 1 ? "1 foto compartida" : fotos.length + " fotos compartidas");
-  if (fotos.length === 0){
-    grilla.innerHTML = '<div class="vacio">Todavía no hay fotos. ¡Sé el primero en compartir una!</div>';
+  const lista = filtradas();
+  const n = lista.length;
+  $("contador").textContent = (n === 1 ? "1 foto" : n + " fotos") + (filtro === "Todas" ? " compartidas" : " · " + filtro);
+  if (n === 0){
+    grilla.innerHTML = '<div class="vacio">' + (fotos.length ? "Todavía no hay fotos en «" + filtro + "»." : "Todavía no hay fotos. ¡Sé el primero en compartir una!") + "</div>";
     $("verMas").hidden = true;
     return;
   }
-  const visibles = fotos.slice(0, mostradas);
+  const visibles = lista.slice(0, mostradas);
   const ids = new Set(visibles.map(f => f.id));
-  // quitar las que ya no están (por ejemplo, si los novios borran una en Drive)
-  [...grilla.children].forEach(n => { if (!n.dataset.id || !ids.has(n.dataset.id)) n.remove(); });
-  // agregar / ordenar
+  [...grilla.children].forEach(el => { if (!el.dataset.id || !ids.has(el.dataset.id)) el.remove(); });
   visibles.forEach((f, i) => {
-    let n = grilla.querySelector('[data-id="' + CSS.escape(f.id) + '"]');
-    if (!n){
-      n = document.createElement("div");
-      n.className = "foto" + (!primeraCarga && !conocidas.has(f.id) ? " nueva" : "");
-      n.dataset.id = f.id;
+    let el = grilla.querySelector('[data-id="' + CSS.escape(f.id) + '"]');
+    if (!el){
+      el = document.createElement("div");
+      el.className = "foto" + (!primeraCarga && !conocidas.has(f.id) ? " nueva" : "");
+      el.dataset.id = f.id;
       const img = new Image();
       img.loading = "lazy"; img.alt = f.autor ? "Foto de " + f.autor : "Foto de la boda";
       img.className = "cargando";
       img.onload = () => img.classList.remove("cargando");
       img.onerror = () => { if (!img.dataset.r && !f.src){ img.dataset.r = 1; img.src = urlRespaldo(f, 600); } };
       img.src = urlFoto(f, 600);
-      n.appendChild(img);
-      if (f.autor){ const a = document.createElement("div"); a.className = "autor"; a.textContent = f.autor; n.appendChild(a); }
-      n.addEventListener("click", () => abrirVisor(fotos.findIndex(x => x.id === f.id)));
+      el.appendChild(img);
+      if (f.reto){ const s = document.createElement("div"); s.className = "sello"; s.textContent = "★ " + f.reto; el.appendChild(s); }
+      if (f.autor){ const a = document.createElement("div"); a.className = "autor"; a.textContent = f.autor; el.appendChild(a); }
+      el.addEventListener("click", () => abrirVisor(f.id));
     }
-    if (grilla.children[i] !== n) grilla.insertBefore(n, grilla.children[i] || null);
+    if (grilla.children[i] !== el) grilla.insertBefore(el, grilla.children[i] || null);
     conocidas.add(f.id);
   });
-  $("verMas").hidden = fotos.length <= mostradas;
+  $("verMas").hidden = n <= mostradas;
 }
 $("verMas").addEventListener("click", () => { mostradas += POR_PAGINA; pintar(); });
 
-// Buscar fotos nuevas cada tanto, solo con la pantalla encendida
 setInterval(() => { if (!document.hidden) cargarLista(); }, CADA_CUANTO);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) cargarLista(); });
 
@@ -310,9 +535,17 @@ async function subir(lista, input){
   const archivos = [...lista].filter(f => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name));
   input.value = "";
   if (!archivos.length || subiendo) return;
+  if (!miNombre() && $("nombre").value.trim()) fijarNombre();
+  const retoIdx = $("reto").value;
+  const reto = retoIdx === "" ? "" : RETOS[Number(retoIdx)];
+  if (reto && !miNombre()){
+    estado("Para que el reto cuente, escribí tu nombre arriba y volvé a elegir la foto.", "err");
+    $("nombre").focus();
+    return;
+  }
   subiendo = true;
-  const autor = $("nombre").value.trim() || "Invitado";
-  try { localStorage.setItem("boda_nombre", $("nombre").value.trim()); } catch(e){}
+  const autor = miNombre() || "Invitado";
+  const momento = momentoElegido;
   let bien = 0, mal = 0;
   progreso(0);
   for (let i = 0; i < archivos.length; i++){
@@ -321,10 +554,10 @@ async function subir(lista, input){
       const { blob, mime } = await achicar(archivos[i]);
       if (DEMO){
         await new Promise(r => setTimeout(r, 500));
-        fotos.unshift({ id: "demo-" + Date.now() + i, autor, fecha: Date.now(), src: URL.createObjectURL(blob) });
+        fotos.unshift({ id: "demo-" + Date.now() + i, autor, reto, momento, fecha: Date.now(), src: URL.createObjectURL(blob) });
       } else {
         const data = await aBase64(blob);
-        const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ autor, mime, data }) });
+        const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ autor, reto, momento, mime, data }) });
         const d = await r.json();
         if (!d.ok) throw new Error(d.error);
       }
@@ -334,32 +567,33 @@ async function subir(lista, input){
   }
   progreso(null);
   subiendo = false;
-  if (mal === 0) estado("¡Gracias! " + (bien === 1 ? "Tu foto ya está en el álbum." : "Tus " + bien + " fotos ya están en el álbum."), "ok");
-  else estado("Se subieron " + bien + " y fallaron " + mal + ". Probá de nuevo con las que faltan (revisá tu conexión).", "err");
+  if (mal === 0){
+    let msg = "¡Gracias! " + (bien === 1 ? "Tu foto ya está en el álbum." : "Tus " + bien + " fotos ya están en el álbum.");
+    if (reto) msg += "<br>★ Reto cumplido: <b>" + reto.replace(/</g,"&lt;") + "</b>";
+    estado(msg, "ok");
+    $("reto").value = "";
+  } else {
+    estado("Se subieron " + bien + " y fallaron " + mal + ". Probá de nuevo con las que faltan (revisá tu conexión).", "err");
+  }
   cargarLista();
 }
 
-// Achica la foto para que suba rápido aunque haya poca señal en el salón
 async function achicar(file){
   try {
     const bmp = await cargarImagen(file);
-    const w0 = bmp.width, h0 = bmp.height;
-    const k = Math.min(1, LADO_MAX / Math.max(w0, h0));
+    const k = Math.min(1, LADO_MAX / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas");
-    c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
     const blob = await new Promise(r => c.toBlob(r, "image/jpeg", 0.85));
     if (!blob) throw new Error("sin blob");
     return { blob, mime: "image/jpeg" };
   } catch(e){
-    // Si el navegador no puede leerla (por ej. HEIC en compu), se sube tal cual
     return { blob: file, mime: file.type || "image/heic" };
   }
 }
 function cargarImagen(file){
-  if (window.createImageBitmap){
-    return createImageBitmap(file, { imageOrientation: "from-image" }).catch(() => cargarImg(file));
-  }
+  if (window.createImageBitmap) return createImageBitmap(file, { imageOrientation: "from-image" }).catch(() => cargarImg(file));
   return cargarImg(file);
 }
 function cargarImg(file){
@@ -378,29 +612,37 @@ function aBase64(blob){
 }
 
 /* ---------- Visor ---------- */
-let actual = 0, toqueX = null;
-function abrirVisor(i){
-  if (i < 0) return;
-  actual = i; mostrarVisor();
+let enVisor = [], actual = 0, toqueX = null;
+function abrirVisor(id){
+  enVisor = filtradas();
+  actual = enVisor.findIndex(f => f.id === id);
+  if (actual < 0) return;
+  mostrarVisor();
   $("visor").classList.add("abierto");
 }
 function mostrarVisor(){
-  const f = fotos[actual]; if (!f) return;
+  const f = enVisor[actual]; if (!f) return;
   const img = $("vImg");
   img.onerror = () => { if (!f.src && img.src.indexOf("thumbnail") < 0) img.src = urlRespaldo(f, 1600); };
   img.src = urlFoto(f, 1600);
-  const descarga = f.src ? f.src : "https://drive.google.com/uc?export=download&id=" + f.id;
-  $("vInfo").innerHTML = "";
-  const t = document.createElement("span");
-  t.textContent = (f.autor ? "Foto de " + f.autor : "") + "  ·  " + (actual+1) + " de " + fotos.length;
-  const a = document.createElement("a"); a.href = descarga; a.target = "_blank"; a.rel = "noopener"; a.textContent = "DESCARGAR";
-  $("vInfo").append(t, a);
+  const partes = [];
+  if (f.autor) partes.push("Foto de " + f.autor);
+  if (f.momento) partes.push(f.momento);
+  partes.push((actual+1) + " de " + enVisor.length);
+  const info = $("vInfo"); info.innerHTML = "";
+  const t = document.createElement("div"); t.textContent = partes.join("  ·  "); info.appendChild(t);
+  if (f.reto){ const r = document.createElement("div"); r.textContent = "★ Reto: " + f.reto; info.appendChild(r); }
+  const a = document.createElement("a");
+  a.href = f.src ? f.src : "https://drive.google.com/uc?export=download&id=" + f.id;
+  a.target = "_blank"; a.rel = "noopener"; a.textContent = "DESCARGAR";
+  info.appendChild(a);
 }
-function mover(d){ actual = (actual + d + fotos.length) % fotos.length; mostrarVisor(); }
-$("vCerrar").onclick = () => $("visor").classList.remove("abierto");
+function mover(d){ if (!enVisor.length) return; actual = (actual + d + enVisor.length) % enVisor.length; mostrarVisor(); }
+const cerrarVisor = () => $("visor").classList.remove("abierto");
+$("vCerrar").onclick = cerrarVisor;
 $("vAnt").onclick = () => mover(-1);
 $("vSig").onclick = () => mover(1);
-$("visor").addEventListener("click", e => { if (e.target.id === "visor") $("visor").classList.remove("abierto"); });
+$("visor").addEventListener("click", e => { if (e.target.id === "visor") cerrarVisor(); });
 $("visor").addEventListener("touchstart", e => { toqueX = e.touches[0].clientX; }, { passive: true });
 $("visor").addEventListener("touchend", e => {
   if (toqueX === null) return;
@@ -409,17 +651,49 @@ $("visor").addEventListener("touchend", e => {
 });
 document.addEventListener("keydown", e => {
   if (!$("visor").classList.contains("abierto")) return;
-  if (e.key === "Escape") $("visor").classList.remove("abierto");
+  if (e.key === "Escape") cerrarVisor();
   if (e.key === "ArrowRight") mover(1);
   if (e.key === "ArrowLeft") mover(-1);
 });
 
+/* ---------- Instalar como app ---------- */
+(function(){
+  const yaInstalada = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if (yaInstalada || leer("boda_sin_aviso_app")) return;
+  const ua = navigator.userAgent;
+  const esIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const esMovil = esIOS || /Android/i.test(ua);
+  if (!esMovil) return;
+  const compartir = '<svg class="ios-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 11v9h14v-9"/></svg>';
+  $("instalarTxt").innerHTML = esIOS
+    ? "En Safari tocá " + compartir + " <b style='display:inline;font-family:inherit;font-size:inherit'>Compartir</b> y después «Agregar a inicio»."
+    : "Tocá el menú ⋮ del navegador y elegí «Agregar a pantalla principal» o «Instalar app».";
+  $("instalar").hidden = false;
+  let pedido = null;
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault(); pedido = e;
+    $("btnInstalar").hidden = false;
+    $("instalarTxt").textContent = "Instalala y entrá con un toque desde tu pantalla de inicio.";
+  });
+  $("btnInstalar").onclick = async () => {
+    if (!pedido) return;
+    pedido.prompt();
+    try { const r = await pedido.userChoice; if (r.outcome === "accepted") $("instalar").hidden = true; } catch(e){}
+    pedido = null;
+  };
+  window.addEventListener("appinstalled", () => { $("instalar").hidden = true; });
+  $("cerrarInstalar").onclick = () => { $("instalar").hidden = true; guardar("boda_sin_aviso_app", "1"); };
+})();
+
 /* ---------- Modo pantalla (proyector / TV del salón) ---------- */
-let pTimer = null, pIdx = 0, pVistas = new Set(), pCapa = 0;
+let pTimer = null, pIdx = 0, pVistas = new Set();
 function urlPublica(){ return location.href.split("?")[0].split("#")[0]; }
+function pedirPantallaCompleta(){
+  try { if (!document.fullscreenElement && document.documentElement.requestFullscreen){ const p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } } catch(e){}
+}
 function entrarPantalla(){
   $("pantalla").classList.add("activa");
-  try { const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } catch(e){}
+  pedirPantallaCompleta();
   try {
     const q = qrcode(0, "M"); q.addData(urlPublica()); q.make();
     $("qr").innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + "<div>¡Subí tus fotos!</div>";
@@ -435,8 +709,7 @@ function salirPantalla(){
 function siguienteSlide(){
   if (!fotos.length){ $("espera").hidden = false; return; }
   $("espera").hidden = true;
-  // si llegó una foto nueva, se muestra primero
-  let f = fotos.find(x => !pVistas.has(x.id));
+  let f = fotos.find(x => !pVistas.has(x.id));   // las nuevas, primero
   if (f) pVistas.add(f.id);
   else { f = fotos[pIdx % fotos.length]; pIdx++; }
   const cont = $("slides");
@@ -448,6 +721,7 @@ function siguienteSlide(){
   img.onload = () => {
     requestAnimationFrame(() => s.classList.add("on"));
     $("pAutor").textContent = f.autor ? "Foto de " + f.autor : "";
+    $("pReto").hidden = !f.reto; $("pReto").textContent = f.reto ? "★ Reto: " + f.reto : "";
     const viejas = [...cont.children].slice(0, -1);
     setTimeout(() => viejas.forEach(v => v.remove()), 1500);
   };
@@ -456,25 +730,27 @@ function siguienteSlide(){
 }
 $("btnPantalla").onclick = entrarPantalla;
 $("pSalir").onclick = e => { e.stopPropagation(); salirPantalla(); };
-$("pantalla").addEventListener("click", () => {
-  try { if (!document.fullscreenElement){ const p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } } catch(e){}
-});
+$("pantalla").addEventListener("click", pedirPantallaCompleta);
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $("pantalla").classList.contains("activa")) salirPantalla(); });
 
 /* ---------- Demo ---------- */
 function demoFotos(){
   const tonos = [["#222","#777"],["#444","#bbb"],["#111","#555"],["#333","#999"],["#555","#ddd"],["#262626","#8a8a8a"]];
   const alturas = [800, 600, 1000, 700, 900, 650];
-  const nombres = ["Tía Marta","Juli","Primo Nico","Abuela Rosa","Los del Sur","Caro"];
+  const datos = [["Tía Marta", RETOS[0], "Fiesta"], ["Juli", "", "Iglesia"], ["Primo Nico", RETOS[2], "Fiesta"],
+                 ["Tía Marta", RETOS[3], "Vals"], ["Los del Sur", "", "Mesa dulce"], ["Juli", RETOS[0], "Fiesta"]];
   return tonos.map((t, i) => {
     const h = alturas[i];
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${h}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t[0]}"/><stop offset="1" stop-color="${t[1]}"/></linearGradient></defs><rect width="800" height="${h}" fill="url(#g)"/><text x="400" y="${h/2}" font-family="Georgia" font-size="56" fill="#fff" text-anchor="middle" font-style="italic">Foto de ejemplo ${i+1}</text></svg>`;
-    return { id: "ej" + i, autor: nombres[i], fecha: Date.now() - i * 60000, src: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg) };
+    return { id: "ej" + i, autor: datos[i][0], reto: datos[i][1], momento: datos[i][2], fecha: Date.now() - i * 60000,
+             src: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg) };
   });
 }
 
 /* ---------- Inicio ---------- */
 if (DEMO) $("avisoDemo").hidden = false;
+armarChips();
+mostrarNombre();
 cargarLista();
 if (/[?&]pantalla/.test(location.search)) window.addEventListener("load", entrarPantalla);
 </script>
