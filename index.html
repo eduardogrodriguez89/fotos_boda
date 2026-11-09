@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Álbum de la boda · Cecilia & Eduardo</title>
+<meta name="description" content="Subí tus fotos del casamiento de Cecilia y Eduardo y mirá las de todos en vivo.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Forum&family=Pinyon+Script&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ============ CONFIGURACIÓN RÁPIDA ============
+     Si querés cambiar colores, hacelo acá. */
+  :root{
+    --papel:#ffffff;
+    --tinta:#111111;
+    --gris:#6b6b6b;
+    --linea:#1a1a1a;
+    --suave:#f3f1ec;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--papel);color:var(--tinta);
+    font-family:"Crimson Pro",Georgia,serif;font-size:18px;line-height:1.45;
+    min-height:100vh;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:16px 16px 60px}
+
+  /* ---------- Cabecera tipo periódico ---------- */
+  .edicion{display:flex;align-items:center;gap:12px;font-family:Forum,serif;letter-spacing:.12em;font-size:13px}
+  .edicion::before,.edicion::after{content:"";flex:1;border-top:4px solid var(--linea)}
+  .mast{font-family:"UnifrakturMaguntia",serif;font-size:clamp(46px,13vw,96px);text-align:center;line-height:1.05;margin:4px 0 6px}
+  .regla{border-top:1px solid var(--linea)}
+  .titular{font-family:Forum,serif;text-align:center;font-size:clamp(24px,7vw,46px);letter-spacing:.04em;padding:4px 0}
+  .novios{font-family:Forum,serif;text-align:center;font-size:clamp(30px,9.5vw,62px);line-height:1.05;padding:8px 0 0;letter-spacing:.01em}
+  .script{font-family:"Pinyon Script",cursive;text-align:center;font-size:clamp(34px,10vw,60px);line-height:1.15;margin:2px 0 4px}
+  .fecha{font-family:"Pinyon Script",cursive;text-align:center;font-size:28px}
+  .doble{border-top:1px solid var(--linea);border-bottom:4px solid var(--linea);height:7px;margin:8px 0 18px}
+
+  /* ---------- Subir fotos ---------- */
+  .subir{border:1px solid var(--linea);padding:18px 16px;margin:0 0 22px;background:var(--papel)}
+  .subir h2{font-family:Forum,serif;font-weight:400;font-size:24px;letter-spacing:.06em;text-align:center;margin-bottom:4px}
+  .subir p.bajada{text-align:center;color:var(--gris);font-style:italic;margin-bottom:14px}
+  label.campo{display:block;font-family:Forum,serif;letter-spacing:.08em;font-size:14px;margin-bottom:4px}
+  input[type=text]{
+    width:100%;font:inherit;padding:11px 12px;border:1px solid var(--linea);background:#fff;border-radius:0;
+    margin-bottom:14px;color:var(--tinta)
+  }
+  .botones{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:Forum,serif;letter-spacing:.08em;font-size:17px;
+    padding:14px 10px;border:1px solid var(--linea);background:var(--tinta);color:#fff;cursor:pointer;
+    text-align:center;user-select:none;-webkit-tap-highlight-color:transparent
+  }
+  .btn.claro{background:#fff;color:var(--tinta)}
+  .btn:active{transform:translateY(1px)}
+  .btn svg{width:20px;height:20px;flex:none}
+  input[type=file]{display:none}
+  #estado{margin-top:12px;font-size:16px}
+  .barra{height:6px;border:1px solid var(--linea);margin-top:6px;display:none}
+  .barra>i{display:block;height:100%;width:0;background:var(--tinta);transition:width .25s}
+  .ok{font-style:italic}
+  .err{color:#a40000}
+
+  /* ---------- Galería ---------- */
+  .cab-galeria{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .cab-galeria h2{font-family:Forum,serif;font-weight:400;font-size:26px;letter-spacing:.06em}
+  .contador{color:var(--gris);font-style:italic}
+  .vivo{display:inline-flex;align-items:center;gap:6px;font-family:Forum,serif;letter-spacing:.1em;font-size:13px}
+  .vivo::before{content:"";width:8px;height:8px;border-radius:50%;background:#c00;animation:lat 1.6s infinite}
+  @keyframes lat{50%{opacity:.25}}
+  .acciones{display:flex;gap:8px;align-items:center}
+  .mini{font-family:Forum,serif;font-size:14px;letter-spacing:.08em;padding:7px 10px;border:1px solid var(--linea);background:#fff;cursor:pointer;color:var(--tinta)}
+
+  .grilla{columns:2 160px;column-gap:8px}
+  .foto{break-inside:avoid;margin-bottom:8px;position:relative;cursor:zoom-in;background:var(--suave);overflow:hidden}
+  .foto img{display:block;width:100%;height:auto;filter:grayscale(0);transition:opacity .4s}
+  .foto img.cargando{opacity:0;min-height:140px}
+  .foto .autor{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 5px;font-size:14px;color:#fff;
+    background:linear-gradient(transparent,rgba(0,0,0,.6));font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .foto.nueva{animation:entra .8s ease}
+  @keyframes entra{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+  .vacio{border:1px dashed var(--gris);padding:30px 16px;text-align:center;color:var(--gris);font-style:italic}
+  .mas{display:block;margin:14px auto 0}
+
+  .pie{text-align:center;margin-top:34px;color:var(--gris);font-style:italic;font-size:16px}
+  .demo{background:#fff6d6;border:1px solid #d8b84a;padding:10px 12px;margin-bottom:14px;font-size:15px}
+
+  /* ---------- Visor ---------- */
+  .visor{position:fixed;inset:0;background:rgba(10,10,10,.96);display:none;z-index:50;
+    align-items:center;justify-content:center;flex-direction:column}
+  .visor.abierto{display:flex}
+  .visor img{max-width:96vw;max-height:80vh;object-fit:contain}
+  .visor .info{color:#eee;margin-top:10px;font-style:italic;text-align:center;padding:0 14px}
+  .visor .info a{color:#fff;margin-left:10px;font-style:normal;font-family:Forum,serif;letter-spacing:.06em}
+  .visor button{position:absolute;background:none;border:0;color:#fff;font-size:38px;cursor:pointer;padding:10px 16px;line-height:1}
+  .cerrar{top:max(6px,env(safe-area-inset-top));right:6px}
+  .ant{left:0;top:50%;transform:translateY(-50%)}
+  .sig{right:0;top:50%;transform:translateY(-50%)}
+
+  /* ---------- Modo pantalla (para proyectar en el salón) ---------- */
+  .pantalla{position:fixed;inset:0;background:#000;z-index:60;display:none}
+  .pantalla.activa{display:block}
+  .pantalla .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s}
+  .pantalla .slide.on{opacity:1}
+  .pantalla .slide img{max-width:100%;max-height:100%;object-fit:contain}
+  .pantalla .slide .fondo{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.45);z-index:-1}
+  .pantalla .marca{position:absolute;left:24px;bottom:20px;color:#fff;text-shadow:0 2px 8px #000}
+  .pantalla .marca .m1{font-family:"UnifrakturMaguntia",serif;font-size:42px;line-height:1}
+  .pantalla .marca .m2{font-family:"Pinyon Script",cursive;font-size:30px}
+  .pantalla .marca .m3{font-style:italic;font-size:20px}
+  .pantalla .qr{position:absolute;right:24px;bottom:20px;background:#fff;padding:10px;text-align:center;font-family:Forum,serif;letter-spacing:.06em;font-size:15px;color:#111}
+  .pantalla .qr svg{display:block;width:150px;height:150px}
+  .pantalla .salir{position:absolute;top:12px;right:14px;background:rgba(0,0,0,.4);color:#fff;border:1px solid #fff;font-family:Forum,serif;padding:6px 10px;cursor:pointer;opacity:.25}
+  .pantalla .salir:hover{opacity:1}
+  .pantalla .espera{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Pinyon Script",cursive;font-size:56px;text-align:center;padding:20px}
+
+  @media (min-width:700px){
+    .grilla{columns:3 200px}
+    .subir{padding:24px 28px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="edicion">EDICIÓN ESPECIAL</div>
+  <h1 class="mast">The Wedding Post</h1>
+  <div class="regla"></div>
+  <div class="titular">EL ÁLBUM DE LA BODA</div>
+  <div class="regla"></div>
+  <div class="novios">CECILIA &amp; EDUARDO</div>
+  <div class="script">¡Compartí tus fotos!</div>
+  <div class="fecha">05 de Diciembre de 2026</div>
+  <div class="doble"></div>
+
+  <div id="avisoDemo" class="demo" hidden>
+    <b>Modo demostración:</b> todavía no se pegó la dirección del script de Google en <code>API_URL</code>.
+    Las fotos que subas ahora solo se ven en este celular y se borran al recargar.
+  </div>
+
+  <section class="subir">
+    <h2>SUBÍ TUS FOTOS</h2>
+    <p class="bajada">Todas las fotos que subas las van a ver los novios y el resto de los invitados.</p>
+
+    <label class="campo" for="nombre">TU NOMBRE (opcional)</label>
+    <input type="text" id="nombre" maxlength="40" placeholder="Ej: Tía Marta" autocomplete="name">
+
+    <div class="botones">
+      <label class="btn" for="archivos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+        Elegir fotos
+      </label>
+      <label class="btn claro" for="camara">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        Sacar foto
+      </label>
+    </div>
+    <input type="file" id="archivos" accept="image/*" multiple>
+    <input type="file" id="camara" accept="image/*" capture="environment">
+
+    <div id="estado" aria-live="polite"></div>
+    <div class="barra" id="barra"><i></i></div>
+  </section>
+
+  <section>
+    <div class="cab-galeria">
+      <h2>LAS FOTOS DE TODOS</h2>
+      <div class="acciones">
+        <span class="vivo">EN VIVO</span>
+        <button class="mini" id="btnPantalla" title="Para proyectar en el salón">▶ Pantalla</button>
+      </div>
+    </div>
+    <p class="contador" id="contador">Cargando fotos…</p>
+    <div class="grilla" id="grilla"></div>
+    <button class="mini mas" id="verMas" hidden>Ver más fotos</button>
+  </section>
+
+  <p class="pie">Con cariño, Ceci &amp; Edu · Salón Alma MyG</p>
+</div>
+
+<!-- Visor de una foto -->
+<div class="visor" id="visor" role="dialog" aria-modal="true">
+  <button class="cerrar" id="vCerrar" aria-label="Cerrar">×</button>
+  <button class="ant" id="vAnt" aria-label="Anterior">‹</button>
+  <img id="vImg" alt="">
+  <button class="sig" id="vSig" aria-label="Siguiente">›</button>
+  <div class="info" id="vInfo"></div>
+</div>
+
+<!-- Modo pantalla -->
+<div class="pantalla" id="pantalla">
+  <div id="slides"></div>
+  <div class="espera" id="espera">Esperando las primeras fotos…</div>
+  <div class="marca">
+    <div class="m1">The Wedding Post</div>
+    <div class="m2">Cecilia &amp; Eduardo</div>
+    <div class="m3" id="pAutor"></div>
+  </div>
+  <div class="qr" id="qr"></div>
+  <button class="salir" id="pSalir">Salir</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+<script>
+/* =====================================================================
+   PEGÁ ACÁ la dirección de la "Aplicación web" de Google Apps Script
+   (termina en /exec). Ej: https://script.google.com/macros/s/AKfy.../exec
+   ===================================================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbxhENpaA95SVHzC39EYimwX6sbHUbpz_EfE9p5j6XnutH3lX_C8umxTiFoN4joMzLLRig/exec";
+
+const CADA_CUANTO = 20000;      // cada cuántos ms se buscan fotos nuevas (20 s)
+const POR_PAGINA = 30;          // fotos que se muestran antes de "Ver más"
+const LADO_MAX = 1920;          // las fotos se achican a este tamaño antes de subir
+const SEG_PANTALLA = 7;         // segundos que dura cada foto en modo pantalla
+
+/* ===================================================================== */
+const DEMO = !/^https:\/\/script\.google\.com\//.test(API_URL);
+const $ = id => document.getElementById(id);
+let fotos = [];                 // [{id, autor, fecha, src?}]
+let conocidas = new Set();
+let mostradas = POR_PAGINA;
+let primeraCarga = true;
+
+function urlFoto(f, ancho){
+  if (f.src) return f.src;
+  return "https://lh3.googleusercontent.com/d/" + f.id + "=w" + ancho;
+}
+function urlRespaldo(f, ancho){
+  return "https://drive.google.com/thumbnail?id=" + f.id + "&sz=w" + ancho;
+}
+
+/* ---------- Nombre recordado ---------- */
+try { $("nombre").value = localStorage.getItem("boda_nombre") || ""; } catch(e){}
+$("nombre").addEventListener("change", () => { try { localStorage.setItem("boda_nombre", $("nombre").value.trim()); } catch(e){} });
+
+/* ---------- Galería ---------- */
+async function cargarLista(){
+  if (DEMO){
+    if (primeraCarga) { fotos = demoFotos(); }
+  } else {
+    try {
+      const r = await fetch(API_URL + "?accion=lista&t=" + Date.now());
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error);
+      fotos = d.fotos;
+    } catch(e){
+      if (primeraCarga) $("contador").textContent = "No se pudieron cargar las fotos. Probá recargar la página.";
+      return;
+    }
+  }
+  pintar();
+  primeraCarga = false;
+}
+
+function pintar(){
+  const grilla = $("grilla");
+  $("contador").textContent = fotos.length === 0 ? "" :
+    (fotos.length === 1 ? "1 foto compartida" : fotos.length + " fotos compartidas");
+  if (fotos.length === 0){
+    grilla.innerHTML = '<div class="vacio">Todavía no hay fotos. ¡Sé el primero en compartir una!</div>';
+    $("verMas").hidden = true;
+    return;
+  }
+  const visibles = fotos.slice(0, mostradas);
+  const ids = new Set(visibles.map(f => f.id));
+  // quitar las que ya no están (por ejemplo, si los novios borran una en Drive)
+  [...grilla.children].forEach(n => { if (!n.dataset.id || !ids.has(n.dataset.id)) n.remove(); });
+  // agregar / ordenar
+  visibles.forEach((f, i) => {
+    let n = grilla.querySelector('[data-id="' + CSS.escape(f.id) + '"]');
+    if (!n){
+      n = document.createElement("div");
+      n.className = "foto" + (!primeraCarga && !conocidas.has(f.id) ? " nueva" : "");
+      n.dataset.id = f.id;
+      const img = new Image();
+      img.loading = "lazy"; img.alt = f.autor ? "Foto de " + f.autor : "Foto de la boda";
+      img.className = "cargando";
+      img.onload = () => img.classList.remove("cargando");
+      img.onerror = () => { if (!img.dataset.r && !f.src){ img.dataset.r = 1; img.src = urlRespaldo(f, 600); } };
+      img.src = urlFoto(f, 600);
+      n.appendChild(img);
+      if (f.autor){ const a = document.createElement("div"); a.className = "autor"; a.textContent = f.autor; n.appendChild(a); }
+      n.addEventListener("click", () => abrirVisor(fotos.findIndex(x => x.id === f.id)));
+    }
+    if (grilla.children[i] !== n) grilla.insertBefore(n, grilla.children[i] || null);
+    conocidas.add(f.id);
+  });
+  $("verMas").hidden = fotos.length <= mostradas;
+}
+$("verMas").addEventListener("click", () => { mostradas += POR_PAGINA; pintar(); });
+
+// Buscar fotos nuevas cada tanto, solo con la pantalla encendida
+setInterval(() => { if (!document.hidden) cargarLista(); }, CADA_CUANTO);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) cargarLista(); });
+
+/* ---------- Subir ---------- */
+$("archivos").addEventListener("change", e => subir(e.target.files, e.target));
+$("camara").addEventListener("change", e => subir(e.target.files, e.target));
+
+function estado(html, clase){ $("estado").className = clase || ""; $("estado").innerHTML = html; }
+function progreso(p){ const b = $("barra"); b.style.display = p === null ? "none" : "block"; b.firstElementChild.style.width = (p||0) + "%"; }
+
+let subiendo = false;
+async function subir(lista, input){
+  const archivos = [...lista].filter(f => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name));
+  input.value = "";
+  if (!archivos.length || subiendo) return;
+  subiendo = true;
+  const autor = $("nombre").value.trim() || "Invitado";
+  try { localStorage.setItem("boda_nombre", $("nombre").value.trim()); } catch(e){}
+  let bien = 0, mal = 0;
+  progreso(0);
+  for (let i = 0; i < archivos.length; i++){
+    estado("Subiendo foto " + (i+1) + " de " + archivos.length + "…");
+    try {
+      const { blob, mime } = await achicar(archivos[i]);
+      if (DEMO){
+        await new Promise(r => setTimeout(r, 500));
+        fotos.unshift({ id: "demo-" + Date.now() + i, autor, fecha: Date.now(), src: URL.createObjectURL(blob) });
+      } else {
+        const data = await aBase64(blob);
+        const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ autor, mime, data }) });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error);
+      }
+      bien++;
+    } catch(e){ console.warn(e); mal++; }
+    progreso(((i+1) / archivos.length) * 100);
+  }
+  progreso(null);
+  subiendo = false;
+  if (mal === 0) estado("¡Gracias! " + (bien === 1 ? "Tu foto ya está en el álbum." : "Tus " + bien + " fotos ya están en el álbum."), "ok");
+  else estado("Se subieron " + bien + " y fallaron " + mal + ". Probá de nuevo con las que faltan (revisá tu conexión).", "err");
+  cargarLista();
+}
+
+// Achica la foto para que suba rápido aunque haya poca señal en el salón
+async function achicar(file){
+  try {
+    const bmp = await cargarImagen(file);
+    const w0 = bmp.width, h0 = bmp.height;
+    const k = Math.min(1, LADO_MAX / Math.max(w0, h0));
+    const c = document.createElement("canvas");
+    c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise(r => c.toBlob(r, "image/jpeg", 0.85));
+    if (!blob) throw new Error("sin blob");
+    return { blob, mime: "image/jpeg" };
+  } catch(e){
+    // Si el navegador no puede leerla (por ej. HEIC en compu), se sube tal cual
+    return { blob: file, mime: file.type || "image/heic" };
+  }
+}
+function cargarImagen(file){
+  if (window.createImageBitmap){
+    return createImageBitmap(file, { imageOrientation: "from-image" }).catch(() => cargarImg(file));
+  }
+  return cargarImg(file);
+}
+function cargarImg(file){
+  return new Promise((ok, no) => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { ok(im); setTimeout(() => URL.revokeObjectURL(u), 1000); };
+    im.onerror = no; im.src = u;
+  });
+}
+function aBase64(blob){
+  return new Promise((ok, no) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result).split(",")[1]);
+    r.onerror = no; r.readAsDataURL(blob);
+  });
+}
+
+/* ---------- Visor ---------- */
+let actual = 0, toqueX = null;
+function abrirVisor(i){
+  if (i < 0) return;
+  actual = i; mostrarVisor();
+  $("visor").classList.add("abierto");
+}
+function mostrarVisor(){
+  const f = fotos[actual]; if (!f) return;
+  const img = $("vImg");
+  img.onerror = () => { if (!f.src && img.src.indexOf("thumbnail") < 0) img.src = urlRespaldo(f, 1600); };
+  img.src = urlFoto(f, 1600);
+  const descarga = f.src ? f.src : "https://drive.google.com/uc?export=download&id=" + f.id;
+  $("vInfo").innerHTML = "";
+  const t = document.createElement("span");
+  t.textContent = (f.autor ? "Foto de " + f.autor : "") + "  ·  " + (actual+1) + " de " + fotos.length;
+  const a = document.createElement("a"); a.href = descarga; a.target = "_blank"; a.rel = "noopener"; a.textContent = "DESCARGAR";
+  $("vInfo").append(t, a);
+}
+function mover(d){ actual = (actual + d + fotos.length) % fotos.length; mostrarVisor(); }
+$("vCerrar").onclick = () => $("visor").classList.remove("abierto");
+$("vAnt").onclick = () => mover(-1);
+$("vSig").onclick = () => mover(1);
+$("visor").addEventListener("click", e => { if (e.target.id === "visor") $("visor").classList.remove("abierto"); });
+$("visor").addEventListener("touchstart", e => { toqueX = e.touches[0].clientX; }, { passive: true });
+$("visor").addEventListener("touchend", e => {
+  if (toqueX === null) return;
+  const dx = e.changedTouches[0].clientX - toqueX; toqueX = null;
+  if (Math.abs(dx) > 50) mover(dx < 0 ? 1 : -1);
+});
+document.addEventListener("keydown", e => {
+  if (!$("visor").classList.contains("abierto")) return;
+  if (e.key === "Escape") $("visor").classList.remove("abierto");
+  if (e.key === "ArrowRight") mover(1);
+  if (e.key === "ArrowLeft") mover(-1);
+});
+
+/* ---------- Modo pantalla (proyector / TV del salón) ---------- */
+let pTimer = null, pIdx = 0, pVistas = new Set(), pCapa = 0;
+function urlPublica(){ return location.href.split("?")[0].split("#")[0]; }
+function entrarPantalla(){
+  $("pantalla").classList.add("activa");
+  try { const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } catch(e){}
+  try {
+    const q = qrcode(0, "M"); q.addData(urlPublica()); q.make();
+    $("qr").innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + "<div>¡Subí tus fotos!</div>";
+  } catch(e){ $("qr").hidden = true; }
+  fotos.forEach(f => pVistas.add(f.id));
+  pIdx = 0; siguienteSlide();
+  clearInterval(pTimer); pTimer = setInterval(siguienteSlide, SEG_PANTALLA * 1000);
+}
+function salirPantalla(){
+  $("pantalla").classList.remove("activa"); clearInterval(pTimer);
+  try { document.fullscreenElement && document.exitFullscreen(); } catch(e){}
+}
+function siguienteSlide(){
+  if (!fotos.length){ $("espera").hidden = false; return; }
+  $("espera").hidden = true;
+  // si llegó una foto nueva, se muestra primero
+  let f = fotos.find(x => !pVistas.has(x.id));
+  if (f) pVistas.add(f.id);
+  else { f = fotos[pIdx % fotos.length]; pIdx++; }
+  const cont = $("slides");
+  const s = document.createElement("div"); s.className = "slide";
+  const src = urlFoto(f, 1920);
+  const fondo = document.createElement("div"); fondo.className = "fondo"; fondo.style.backgroundImage = 'url("' + src + '")';
+  const img = new Image();
+  img.onerror = () => { if (!f.src && !img.dataset.r){ img.dataset.r = 1; img.src = urlRespaldo(f, 1920); } };
+  img.onload = () => {
+    requestAnimationFrame(() => s.classList.add("on"));
+    $("pAutor").textContent = f.autor ? "Foto de " + f.autor : "";
+    const viejas = [...cont.children].slice(0, -1);
+    setTimeout(() => viejas.forEach(v => v.remove()), 1500);
+  };
+  img.src = src;
+  s.append(fondo, img); cont.appendChild(s);
+}
+$("btnPantalla").onclick = entrarPantalla;
+$("pSalir").onclick = e => { e.stopPropagation(); salirPantalla(); };
+$("pantalla").addEventListener("click", () => {
+  try { if (!document.fullscreenElement){ const p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } } catch(e){}
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("pantalla").classList.contains("activa")) salirPantalla(); });
+
+/* ---------- Demo ---------- */
+function demoFotos(){
+  const tonos = [["#222","#777"],["#444","#bbb"],["#111","#555"],["#333","#999"],["#555","#ddd"],["#262626","#8a8a8a"]];
+  const alturas = [800, 600, 1000, 700, 900, 650];
+  const nombres = ["Tía Marta","Juli","Primo Nico","Abuela Rosa","Los del Sur","Caro"];
+  return tonos.map((t, i) => {
+    const h = alturas[i];
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${h}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t[0]}"/><stop offset="1" stop-color="${t[1]}"/></linearGradient></defs><rect width="800" height="${h}" fill="url(#g)"/><text x="400" y="${h/2}" font-family="Georgia" font-size="56" fill="#fff" text-anchor="middle" font-style="italic">Foto de ejemplo ${i+1}</text></svg>`;
+    return { id: "ej" + i, autor: nombres[i], fecha: Date.now() - i * 60000, src: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg) };
+  });
+}
+
+/* ---------- Inicio ---------- */
+if (DEMO) $("avisoDemo").hidden = false;
+cargarLista();
+if (/[?&]pantalla/.test(location.search)) window.addEventListener("load", entrarPantalla);
+</script>
+</body>
+</html>
